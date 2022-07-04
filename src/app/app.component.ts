@@ -5,8 +5,7 @@ import {
 } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FileService } from './services/file.service';
-import {saveAs} from 'file-saver';
-
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-root',
@@ -63,16 +62,31 @@ export class AppComponent {
         console.log('Header returned', httpEvent);
         break;
 
-      case HttpEventType.Response:        
-        if(httpEvent.body instanceof Array){
-          for(const fileName of httpEvent.body){
+      case HttpEventType.Response:
+        if (httpEvent.body instanceof Array) {
+          for (const fileName of httpEvent.body) {
             this.fileNames.unshift(fileName);
           }
-        }{
-          //download logic
-          saveAs(new File([httpEvent.body as BlobPart],httpEvent.headers.get('File-Name'),
-                {type: `${httpEvent.headers.get('Content-Type')};charset=utf-8`}));
         }
+        {
+          //download logic
+          saveAs(
+            new File(
+              [httpEvent.body! as BlobPart],
+              httpEvent.headers.get('File-Name')!,
+              { type: `${httpEvent.headers.get('Content-Type')};charset=utf-8` }
+            )
+          );
+
+          // saveAs(
+          //   new File(
+          //     [httpEvent.body! as BlobPart],
+          //     httpEvent.headers.get('File-Name')!,
+          //     { type: `${httpEvent.headers.get('Content-Type')};charset=utf-8` }
+          //   )
+          // );
+        }
+
         break;
     }
     throw new Error('Method not implemented.');
