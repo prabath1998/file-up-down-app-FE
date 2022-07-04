@@ -15,6 +15,7 @@ import { saveAs } from 'file-saver';
 export class AppComponent {
   title = 'upload-download-app';
   fileNames: string[] = [];
+  fileStatus = { status: '', requestType: '', percent: 0 };
 
   constructor(private fileService: FileService) {}
 
@@ -51,11 +52,11 @@ export class AppComponent {
   private reportProgress(httpEvent: HttpEvent<string[] | Blob>): void {
     switch (httpEvent.type) {
       case HttpEventType.UploadProgress:
-        updateStatus(httpEvent.loaded, httpEvent.total, 'Uploading');
+        updateStatus(httpEvent.loaded, httpEvent.total!, 'Uploading');
         break;
 
       case HttpEventType.DownloadProgress:
-        updateStatus(httpEvent.loaded, httpEvent.total, 'Uploading');
+        updateStatus(httpEvent.loaded, httpEvent.total!, 'Downloading');
         break;
 
       case HttpEventType.ResponseHeader:
@@ -88,10 +89,18 @@ export class AppComponent {
         }
 
         break;
+        default:
+          console.log(httpEvent);
+          
+
     }
     throw new Error('Method not implemented.');
   }
 }
-function updateStatus(loaded: number, total: number | undefined, arg2: string) {
-  throw new Error('Function not implemented.');
+
+  function updateStatus(loaded: number, total: number,requstType:string) {
+    this.fileStatus.status = 'progress';
+    this.fileStatus.requestType = requstType;
+    this.fileStatus.percent = Math.round(100 * loaded / total);
+
 }
