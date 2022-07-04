@@ -39,7 +39,7 @@ export class AppComponent {
   //to download files
   onDownloadFiles(filename: string): void {
     this.fileService.download(filename).subscribe(
-      (event) => {
+      event => {
         console.log(event);
         this.reportProgress(event);
       },
@@ -71,14 +71,6 @@ export class AppComponent {
         }
         {
           //download logic
-          saveAs(
-            new File(
-              [httpEvent.body! as BlobPart],
-              httpEvent.headers.get('File-Name')!,
-              { type: `${httpEvent.headers.get('Content-Type')};charset=utf-8` }
-            )
-          );
-
           // saveAs(
           //   new File(
           //     [httpEvent.body! as BlobPart],
@@ -86,6 +78,10 @@ export class AppComponent {
           //     { type: `${httpEvent.headers.get('Content-Type')};charset=utf-8` }
           //   )
           // );
+
+           saveAs(new Blob([httpEvent.body! as BlobPart], 
+            { type: `${httpEvent.headers.get('Content-Type')};charset=utf-8`}),
+             httpEvent.headers.get('File-Name'));
         }
 
         break;
