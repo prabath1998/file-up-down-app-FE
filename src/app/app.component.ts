@@ -52,11 +52,11 @@ export class AppComponent {
   private reportProgress(httpEvent: HttpEvent<string[] | Blob>): void {
     switch (httpEvent.type) {
       case HttpEventType.UploadProgress:
-        updateStatus(httpEvent.loaded, httpEvent.total!, 'Uploading');
+        this.updateStatus(httpEvent.loaded, httpEvent.total!, 'Uploading');
         break;
 
       case HttpEventType.DownloadProgress:
-        updateStatus(httpEvent.loaded, httpEvent.total!, 'Downloading');
+        this.updateStatus(httpEvent.loaded, httpEvent.total!, 'Downloading');
         break;
 
       case HttpEventType.ResponseHeader:
@@ -89,18 +89,16 @@ export class AppComponent {
         }
 
         break;
-        default:
-          console.log(httpEvent);
-          
-
+      default:
+        console.log(httpEvent);
+        break;
     }
     throw new Error('Method not implemented.');
   }
-}
 
-  function updateStatus(loaded: number, total: number,requstType:string) {
+  private updateStatus(loaded: number, total: number, requstType: string) {
     this.fileStatus.status = 'progress';
     this.fileStatus.requestType = requstType;
-    this.fileStatus.percent = Math.round(100 * loaded / total);
-
+    this.fileStatus.percent = Math.round((100 * loaded) / total);
+  }
 }
