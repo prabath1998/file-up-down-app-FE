@@ -6,7 +6,7 @@ import {
 import { Component } from '@angular/core';
 import { FileService } from './services/file.service';
 import {saveAs} from 'file-saver';
-import { type } from 'os';
+
 
 @Component({
   selector: 'app-root',
@@ -70,7 +70,7 @@ export class AppComponent {
           }
         }{
           //download logic
-          saveAs(new File([httpEvent.body],httpEvent.headers.get('File-Name'),
+          saveAs(new File([httpEvent.body as BlobPart],httpEvent.headers.get('File-Name'),
                 {type: `${httpEvent.headers.get('Content-Type')};charset=utf-8`}));
         }
         break;
