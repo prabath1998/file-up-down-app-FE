@@ -49,47 +49,38 @@ export class AppComponent {
     );
   }
 
+  
   private reportProgress(httpEvent: HttpEvent<string[] | Blob>): void {
-    switch (httpEvent.type) {
+    switch(httpEvent.type) {
       case HttpEventType.UploadProgress:
-        this.updateStatus(httpEvent.loaded, httpEvent.total!, 'Uploading');
+        this.updateStatus(httpEvent.loaded, httpEvent.total!, 'Uploading... ');
         break;
-
       case HttpEventType.DownloadProgress:
-        this.updateStatus(httpEvent.loaded, httpEvent.total!, 'Downloading');
+        this.updateStatus(httpEvent.loaded, httpEvent.total!, 'Downloading... ');
         break;
-
       case HttpEventType.ResponseHeader:
         console.log('Header returned', httpEvent);
         break;
-
       case HttpEventType.Response:
         if (httpEvent.body instanceof Array) {
-          for (const fileName of httpEvent.body) {
-            this.fileNames.unshift(fileName);
+          this.fileStatus.status = 'done';
+          for (const filename of httpEvent.body) {
+            this.fileNames.unshift(filename);
           }
+        } else {
+          saveAs(new File([httpEvent.body!], httpEvent.headers.get('File-Name')!, 
+                  {type: `${httpEvent.headers.get('Content-Type')};charset=utf-8`}));
+          // saveAs(new Blob([httpEvent.body!], 
+          //   { type: `${httpEvent.headers.get('Content-Type')};charset=utf-8`}),
+          //    httpEvent.headers.get('File-Name'));
         }
-        {
-          //download logic
-          // saveAs(
-          //   new File(
-          //     [httpEvent.body! as BlobPart],
-          //     httpEvent.headers.get('File-Name')!,
-          //     { type: `${httpEvent.headers.get('Content-Type')};charset=utf-8` }
-          //   )
-          // );
-
-           saveAs(new Blob([httpEvent.body! as BlobPart], 
-            { type: `${httpEvent.headers.get('Content-Type')};charset=utf-8`}),
-             httpEvent.headers.get('File-Name'));
-        }
-
+        this.fileStatus.status = 'done';
         break;
-      default:
-        console.log(httpEvent);
-        break;
+        default:
+          console.log(httpEvent);
+          break;
+      
     }
-    throw new Error('Method not implemented.');
   }
 
   private updateStatus(loaded: number, total: number, requstType: string) {
